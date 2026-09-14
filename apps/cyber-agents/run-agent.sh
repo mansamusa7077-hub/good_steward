@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-set -eu
+set -u
 
 AGENT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 SCAN_TARGET=${1:-"$PWD"}
