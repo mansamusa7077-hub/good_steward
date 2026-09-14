@@ -1,0 +1,48 @@
+name: Package Cyber Guardian
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/cyber-agents/**"
+      - ".github/workflows/cyber-agent-release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install and build
+        run: |
+          npm install --ignore-scripts
+          npm run build --workspace @good-steward/cyber-agents
+      - name: Assemble download
+        run: |
+          mkdir -p release/good-steward-cyber-agent/dist
+          cp apps/cyber-agents/dist/*.js release/good-steward-cyber-agent/dist/
+          cp apps/cyber-agents/package.json release/good-steward-cyber-agent/
+          cp apps/cyber-agents/run-agent.cmd release/good-steward-cyber-agent/
+          cp apps/cyber-agents/run-agent.sh release/good-steward-cyber-agent/
+          cp apps/cyber-agents/DOWNLOAD.md release/good-steward-cyber-agent/README.md
+          chmod +x release/good-steward-cyber-agent/run-agent.sh
+          cd release
+          zip -r good-steward-cyber-agent-v0.1.0.zip good-steward-cyber-agent
+      - name: Publish v0.1.0 release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view cyber-agent-v0.1.0 >/dev/null 2>&1; then
+            echo "Release cyber-agent-v0.1.0 already exists; leaving it unchanged."
+          else
+            gh release create cyber-agent-v0.1.0 release/good-steward-cyber-agent-v0.1.0.zip --title "Good Steward Cyber Guardian v0.1.0" --notes "First downloadable defensive scanning agent. Local, read-only, redacted, and human-supervised."
+          fi
