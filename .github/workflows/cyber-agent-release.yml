@@ -41,8 +41,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          ASSET="release/good-steward-cyber-agent-v0.1.0.zip"
           if gh release view cyber-agent-v0.1.0 >/dev/null 2>&1; then
-            echo "Release cyber-agent-v0.1.0 already exists; leaving it unchanged."
+            gh release upload cyber-agent-v0.1.0 "$ASSET" --clobber
           else
-            gh release create cyber-agent-v0.1.0 release/good-steward-cyber-agent-v0.1.0.zip --title "Good Steward Cyber Guardian v0.1.0" --notes "First downloadable defensive scanning agent. Local, read-only, redacted, and human-supervised."
+            gh release create cyber-agent-v0.1.0 "$ASSET" --title "Good Steward Cyber Guardian v0.1.0" --notes "First downloadable defensive scanning agent. Local, read-only, redacted, and human-supervised."
           fi
