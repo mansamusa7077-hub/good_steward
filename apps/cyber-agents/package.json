@@ -1,0 +1,13 @@
+{
+  "name": "@good-steward/cyber-agents",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": { "good-steward-cyber": "./dist/index.js" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "scan": "npm run build && node dist/index.js",
+    "test": "npm run build && node --test dist/*.test.js"
+  },
+  "devDependencies": { "@types/node": "^22.0.0", "typescript": "^5.7.0" }
+}
